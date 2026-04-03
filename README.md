@@ -463,4 +463,4 @@ Contributions are welcome. See the repository for contribution guidelines.
 
 ## License
 
-This project is currently unlicensed. See the repository for updates.
+Licensed under the GNU Affero General Public License v3.0. See [LICENSE](LICENSE) for details.
