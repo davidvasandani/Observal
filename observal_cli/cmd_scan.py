@@ -16,6 +16,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
+from loguru import logger as optic
 from rich import print as rprint
 from rich.table import Table
 
@@ -166,6 +167,7 @@ def register_scan(app: typer.Typer):
             observal scan --ide kiro
         """
         ensure_loaded()
+        optic.debug("scan: ide={}", ide)
 
         # Validate IDE filter
         if ide:
@@ -243,7 +245,7 @@ def register_scan(app: typer.Typer):
             rprint("[yellow]No IDE configurations found.[/yellow]")
             raise typer.Exit(1)
 
-        rprint(f"\n[bold]Observal Scan[/bold] — {total} components discovered\n")
+        rprint(f"\n[bold]Observal Scan[/bold] - {total} components discovered\n")
 
         # ── IDEs Detected table ──
         if ide_status:
