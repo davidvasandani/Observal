@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 
 import typer
+from loguru import logger
 from rich import print as rprint
 from rich.table import Table
 
@@ -22,6 +23,7 @@ hook_app = typer.Typer(help="Hook registry commands")
 
 
 def register_hook(app: typer.Typer):
+    logger.debug("register_hook called")
     app.add_typer(hook_app, name="hook")
 
 
