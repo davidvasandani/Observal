@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 
 import typer
+from loguru import logger
 from rich import print as rprint
 from rich.table import Table
 
@@ -41,6 +42,7 @@ def list_models(
       observal registry models list --refresh          # Bypass local cache
       observal registry models list --ide cursor -o plain
     """
+    logger.debug("list_models: ide={}", ide)
     catalog = model_catalog.fetch_catalog(refresh=refresh)
     rows = catalog.get("models") or []
     if ide:
