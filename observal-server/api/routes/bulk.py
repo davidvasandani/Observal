@@ -5,6 +5,7 @@ import json
 import logging
 
 from fastapi import APIRouter, Depends
+from loguru import logger as optic
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,6 +24,7 @@ router = APIRouter(prefix="/api/v1/bulk", tags=["bulk"])
 
 async def _agent_name_exists(name: str, user_id, db: AsyncSession) -> bool:
     """Check whether the authenticated user already owns an agent with the given name."""
+    optic.debug("_agent_name_exists: name={}, user_id={}", name, user_id)
     result = await db.execute(select(Agent.id).where(Agent.name == name, Agent.created_by == user_id))
     return result.scalar_one_or_none() is not None
 
@@ -33,6 +35,7 @@ async def _create_single_agent(
     db: AsyncSession,
 ) -> Agent:
     """Create a single Agent + AgentVersion row (with components and goal template)."""
+    optic.debug("_create_single_agent: name={}, user_id={}", item.get("name"), user.id)
     agent = Agent(
         name=item.name,
         owner=item.owner or user.email,
@@ -86,9 +89,10 @@ async def bulk_create_agents(
     """Create multiple agents in a single request.
 
     Duplicate names (agents already owned by the caller) are skipped.
-    When ``dry_run=True`` no agents are persisted — the response previews
+    When ``dry_run=True`` no agents are persisted - the response previews
     what *would* happen.
     """
+    optic.debug("bulk create agents")
     results: list[BulkResultItem] = []
     created = 0
     skipped = 0
