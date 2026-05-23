@@ -18,6 +18,8 @@ import sys
 import time
 from pathlib import Path
 
+from loguru import logger
+
 # Delay before reading the tail.  Claude Code typically finishes writing
 # within 1-2 seconds of Stop, so 3 seconds gives comfortable margin.
 _FLUSH_DELAY_SECS = 3
@@ -29,6 +31,7 @@ _RETRY_DELAY_SECS = 2
 
 def tail_flush(session_id: str, home: Path | None = None) -> None:
     """Push any post-Stop lines for *session_id* and mark it finalized."""
+    logger.debug("tail_flush: session_id={}, home={}", session_id, home)
     from observal_cli.cmd_reconcile import _find_session_file
     from observal_cli.sessions.base import (
         build_payload,
