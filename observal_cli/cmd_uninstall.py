@@ -13,6 +13,7 @@ import tempfile
 from pathlib import Path
 
 import typer
+from loguru import logger
 from rich import print as rprint
 
 from observal_cli.config import CONFIG_DIR
@@ -251,6 +252,7 @@ def register_uninstall(app: typer.Typer):
             observal uninstall --keep-config --keep-cli
             observal uninstall --repo-dir ~/code/Observal --keep-repo
         """
+        logger.debug("uninstall: repo_dir={}", repo_dir)
         repo_root = _find_repo_root(repo_dir)
 
         # Require repo detection - Docker teardown is mandatory
