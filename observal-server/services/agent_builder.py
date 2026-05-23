@@ -22,6 +22,7 @@ Generates IDE-specific agent files from a ResolvedAgent:
 import logging
 from typing import Literal
 
+from loguru import logger as optic
 from pydantic import BaseModel, Field
 
 from schemas.ide_registry import get_valid_ides
@@ -254,6 +255,7 @@ def build_agent_manifest(resolved: ResolvedAgent) -> dict:
 
     Returns a clean dict with only populated fields.
     """
+    optic.debug("build_agent_manifest: agent={}", resolved.agent_name)
     type_map = {
         "mcp": "mcps",
         "skill": "skills",
@@ -290,6 +292,7 @@ def build_agent_manifest(resolved: ResolvedAgent) -> dict:
 
 def build_composition_summary(resolved: ResolvedAgent) -> dict:
     """Build a lightweight summary of the agent's composition for API responses."""
+    optic.debug("build_composition_summary: agent={}", resolved.agent_name)
     type_map = {
         "mcp": "mcps",
         "skill": "skills",
@@ -808,6 +811,7 @@ def generate_ide_agent_files(
     This is the universal entry point — takes a Pydantic AgentManifest
     and produces the correct file layout for any supported IDE.
     """
+    optic.debug("generate_ide_agent_files: agent={}, ide={}", manifest.name, ide)
     generator = _IDE_GENERATORS.get(ide)
     if generator is None:
         raise ValueError(f"Unsupported IDE: {ide!r}. Supported: {', '.join(SUPPORTED_IDES)}")
