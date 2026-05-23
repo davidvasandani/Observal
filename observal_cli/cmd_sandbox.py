@@ -10,6 +10,7 @@ from __future__ import annotations
 import json as _json
 
 import typer
+from loguru import logger
 from rich import print as rprint
 from rich.table import Table
 
@@ -22,6 +23,7 @@ sandbox_app = typer.Typer(help="Sandbox registry commands")
 
 
 def register_sandbox(app: typer.Typer):
+    logger.debug("register_sandbox called")
     app.add_typer(sandbox_app, name="sandbox")
 
 
