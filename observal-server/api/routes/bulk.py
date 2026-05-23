@@ -35,7 +35,7 @@ async def _create_single_agent(
     db: AsyncSession,
 ) -> Agent:
     """Create a single Agent + AgentVersion row (with components and goal template)."""
-    optic.debug("_create_single_agent: name={}, user_id={}", item.get("name"), user.id)
+    optic.debug("_create_single_agent: name={}, user_id={}", item.name, user.id)
     agent = Agent(
         name=item.name,
         owner=item.owner or user.email,
