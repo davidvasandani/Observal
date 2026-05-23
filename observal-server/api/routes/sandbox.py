@@ -7,6 +7,7 @@
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from loguru import logger as optic
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -45,6 +46,7 @@ async def submit_sandbox(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_role(UserRole.user)),
 ):
+    optic.debug("sandbox submit: name={}", req.name)
     existing = await db.execute(
         select(SandboxListing).where(SandboxListing.name == req.name, SandboxListing.submitted_by == current_user.id)
     )
@@ -96,6 +98,7 @@ async def list_sandboxes(
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(optional_current_user),
 ):
+    optic.debug("sandbox list: search={}", search)
     stmt = (
         select(SandboxListing)
         .join(SandboxVersion, SandboxListing.latest_version_id == SandboxVersion.id)
@@ -118,6 +121,7 @@ async def my_sandboxes(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_role(UserRole.user)),
 ):
+    optic.debug("my_sandboxes called")
     stmt = (
         select(SandboxListing)
         .where(SandboxListing.submitted_by == current_user.id)
@@ -135,6 +139,7 @@ async def get_sandbox(
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(optional_current_user),
 ):
+    optic.debug("sandbox get: listing_id={}", listing_id)
     listing = await resolve_listing(SandboxListing, listing_id, db, require_status=ListingStatus.approved)
     if listing:
         await audit(
@@ -171,6 +176,7 @@ async def install_sandbox(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_role(UserRole.user)),
 ):
+    optic.debug("sandbox install: listing_id={}", listing_id)
     listing = await resolve_listing(SandboxListing, listing_id, db, require_status=ListingStatus.approved)
     if not listing:
         listing = await resolve_listing(SandboxListing, listing_id, db)
@@ -201,6 +207,7 @@ async def save_sandbox_draft(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_role(UserRole.user)),
 ):
+    optic.debug("save_sandbox_draft: req={}", req)
     listing = SandboxListing(
         name=req.name,
         owner=req.owner or current_user.username or current_user.email,
@@ -250,6 +257,7 @@ async def update_sandbox_draft(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_role(UserRole.user)),
 ):
+    optic.debug("update_sandbox_draft: listing_id={}", listing_id)
     listing = await resolve_listing(SandboxListing, listing_id, db)
     if not listing:
         raise HTTPException(status_code=404, detail="Listing not found")
@@ -317,6 +325,7 @@ async def start_edit_sandbox(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_role(UserRole.user)),
 ):
+    optic.debug("start_edit_sandbox: listing_id={}", listing_id)
     listing = await resolve_listing(SandboxListing, listing_id, db)
     if not listing:
         raise HTTPException(status_code=404, detail="Listing not found")
@@ -340,6 +349,7 @@ async def cancel_edit_sandbox(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_role(UserRole.user)),
 ):
+    optic.debug("cancel_edit_sandbox: listing_id={}", listing_id)
     listing = await resolve_listing(SandboxListing, listing_id, db)
     if not listing:
         raise HTTPException(status_code=404, detail="Listing not found")
@@ -359,6 +369,7 @@ async def submit_sandbox_draft(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_role(UserRole.user)),
 ):
+    optic.debug("submit_sandbox_draft: listing_id={}", listing_id)
     listing = await resolve_listing(SandboxListing, listing_id, db)
     if not listing:
         raise HTTPException(status_code=404, detail="Listing not found")
@@ -391,6 +402,7 @@ async def delete_sandbox(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_role(UserRole.user)),
 ):
+    optic.debug("sandbox delete: listing_id={}", listing_id)
     listing = await resolve_listing(SandboxListing, listing_id, db)
     if not listing:
         raise HTTPException(status_code=404, detail="Listing not found")
