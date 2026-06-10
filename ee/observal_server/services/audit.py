@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Hari Srinivasan <harisrini21@gmail.com>
 # SPDX-License-Identifier: AGPL-3.0-only
 
-"""Audit logging service for enterprise compliance (SOC 2 / ISO 27001 / HIPAA).
+"""Audit logging service for enterprise compliance (SOC 2 / ISO 27001).
 
 Registers event bus handlers that buffer events and batch-insert to the
 ClickHouse audit_log table.  Only active when DEPLOYMENT_MODE=enterprise.
